@@ -14,15 +14,19 @@ from pydantic import BaseModel, Field
 
 load_dotenv()
 
-PDF_PATH = "./data/Cashflow-Rules-PDF.pdf"
+SOURCE_PATH = "./data/source"
 VECTORSTORE_PATH = "./data/vectorstore"
 CHUNK_SIZE = 300
 CHUNK_OVERLAP = 50
 
-def loaderPdf(pdf_path):
-    """ PDF 파일 path에 있는 PDF 파일을 로드하여 Docs 반환 """
-    loader = PyMuPDFLoader(pdf_path)
-    return loader.load()
+def loaderPdf(source_path):
+    """ source 폴더에 있는 PDF 파일들 모두 로드하여 Docs 반환 """
+    docs = []
+    for file in os.listdir(source_path):
+        if file.endswith(".pdf"):
+            loader = PyMuPDFLoader(os.path.join(source_path, file))
+            docs.extend(loader.load())
+    return docs
 
 def splitText(docs, chunk_size=1000, chunk_overlap=50):
     """ Docs를 분할하여 split_documents 반환 """
@@ -34,9 +38,10 @@ def createEmbeddings():
     return GoogleGenerativeAIEmbeddings(model="gemini-embedding-001")
 
 def createVectorstore(vectorstore_path):
-    """ PDF 파일을 임베딩하여 vectorstore 반환 """
-    loader = loaderPdf(PDF_PATH)
-    split_documents = splitText(loader, CHUNK_SIZE, CHUNK_OVERLAP)
+    """ SOURCE 폴더에 있는 PDF 파일을 임베딩하여 vectorstore 반환 """
+    print("--- 벡터스토어 파일을 생성합니다 ---")
+    docs = loaderPdf(SOURCE_PATH)
+    split_documents = splitText(docs, CHUNK_SIZE, CHUNK_OVERLAP)
     embeddings = createEmbeddings()
     vectorstore = Chroma.from_documents(
         documents=split_documents,
@@ -181,6 +186,6 @@ if __name__ == "__main__":
     # 그래프 시각화
     # graph_image = app.get_graph().draw_mermaid_png(output_file_path="./mermaid_graph.png")
     
-    initial_state = GraphState(question="기본적인 룰 설명해줘.", history=[], context="", answer="")
+    initial_state = GraphState(question="캐시플로우 직업 소개해줘.", history=[], context="", answer="")
     result = app.invoke(initial_state)
     print(result)
