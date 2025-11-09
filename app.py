@@ -211,6 +211,18 @@ except Exception as e:
     st.error(f"챗봇 초기화 중 오류가 발생했습니다: {str(e)}")
     st.stop()
 
+# 예시 프롬프트 추가
+example_prompts = [
+    "캐시플로우 보드게임에 대해 설명해주세요.",
+    "캐시플로우 보드게임의 게임 규칙을 알려주세요.",
+    "캐시플로우 보드게임의 캐릭터를 소개해주세요.",
+    "캐시플로우를 이기기 위해 필요한 전략을 알려주세요."
+]
+with st.expander("예시 프롬프트"):
+    for prompt in example_prompts:
+        if st.button(prompt, key=f"example_{prompt}"):
+            st.session_state.selected_prompt = prompt
+
 # 저장된 대화 히스토리를 화면에 표시
 for message in st.session_state.messages:
     with st.chat_message(message["role"]):
