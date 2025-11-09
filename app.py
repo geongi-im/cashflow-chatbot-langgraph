@@ -192,7 +192,7 @@ st.set_page_config(
     page_title="캐시플로우 보드게임 챗봇",
     layout="centered"  # 페이지 레이아웃 (wide = 전체 너비 사용, centered = 중앙 정렬)
 )
-st.title("캐시플로우 보드게임 챗봇")
+st.title("LangGraph 기반 RAG 챗봇")
 st.info("캐시플로우 보드게임 규칙서를 기반으로 대화를 진행하는 챗봇입니다.")
 
 try:
